@@ -4,7 +4,7 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 36
         targetSdkVersion = 36
-        ndkVersion = "27.1.12297006"
+        ndkVersion = "27.1.12297006" // Sesuai permintaan Mapbox NDK 27
         kotlinVersion = "2.1.20"
     }
     repositories {
@@ -19,3 +19,34 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+allprojects {
+    repositories {
+        // 1. Repositori Mapbox (Harus di paling atas)
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                username = "mapbox"
+                // Mengambil token dari gradle.properties atau langsung jika tidak ada
+                password = project.findProperty('MAPBOX_DOWNLOADS_TOKEN') ?: "Your Mapbox Token Here"
+            }
+        }
+        
+        google()
+        mavenCentral()
+
+        allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+    }
+}
+        
+        // Tambahkan Jitpack jika ada library lain yang membutuhkannya
+        maven { url 'https://www.jitpack.io' }
+    }
+}
